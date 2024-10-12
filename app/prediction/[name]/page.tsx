@@ -1,10 +1,29 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-require('dotenv').config();
+
+// Define types for images and country info
+interface ImageResult {
+  id: string;
+  urls: { small: string };
+}
+
+interface CountryInfo {
+  name: {
+    official: string;
+    common: string;
+  };
+  capital: string[];
+  region: string;
+  subregion: string;
+  population: number;
+  area: number;
+  currencies: { [key: string]: { name: string } };
+  languages: { [key: string]: string };
+}
 
 // Function that fetches country images from Unsplash
-const getImages = async (country: string) => {
+const getImages = async (country: string): Promise<ImageResult[]> => {
   const client_id = process.env.NEXT_PUBLIC_UNSPLASH_CLIENT_ID;
   const response = await fetch(
     `https://api.unsplash.com/search/photos?query=${country}&client_id=${client_id}`
@@ -24,8 +43,8 @@ export default function Prediction({ params }: PredictionParams) {
 
   const [countryCode, setCountryCode] = useState<string | null>(null);
   const [countryName, setCountryName] = useState<string>("Unknown Country");
-  const [countryImages, setCountryImages] = useState<any[]>([]); // Initialize to an empty array
-  const [countryInfo, setCountryInfo] = useState<any | null>(null); // For country info
+  const [countryImages, setCountryImages] = useState<ImageResult[]>([]); // Use ImageResult[] instead of any[]
+  const [countryInfo, setCountryInfo] = useState<CountryInfo | null>(null); // Use CountryInfo instead of any
 
   // Fetch country code based on the name
   useEffect(() => {
@@ -45,7 +64,7 @@ export default function Prediction({ params }: PredictionParams) {
         }
       }
     };
-
+    
     fetchCountryCode();
   }, [name]);
 
@@ -82,7 +101,7 @@ export default function Prediction({ params }: PredictionParams) {
           Predicted Country for {name}
         </h1>
         {countryCode ? (
-          <div className ="text-center text-white">
+          <div className="text-center text-white">
             <p>Country Code: {countryCode}</p>
             <p>Country Name: {countryName}</p>
             <div className="grid grid-cols-1 md:grid-cols-auto-fit md:min-w-[200px] gap-4 mt-4">
