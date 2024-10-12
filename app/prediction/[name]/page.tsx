@@ -1,11 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+require('dotenv').config();
 
 // Function that fetches country images from Unsplash
 const getImages = async (country: string) => {
+  const client_id = process.env.NEXT_PUBLIC_UNSPLASH_CLIENT_ID;
   const response = await fetch(
-    `https://api.unsplash.com/search/photos?query=${country}&client_id=sDqe0RmrdxAQet8UKMT5PpTG3KS2jztT-yujAM33SPg`
+    `https://api.unsplash.com/search/photos?query=${country}&client_id=${client_id}`
   );
   const data = await response.json();
   return data.results || []; // Return results or an empty array
@@ -101,7 +103,7 @@ export default function Prediction({ params }: PredictionParams) {
       </div>
 
       {/* Right Section - Country Info */}
-      <div className="fixed top-20 right-28 w-1/3 h-screen p-4">
+      <div className="fixed top-60 right-28 w-1/3 h-screen p-4">
         <h2 className="text-3xl font-semibold mb-4 text-navy">Country Info</h2>
         {countryInfo ? (
           <div className="text-black">
@@ -113,13 +115,11 @@ export default function Prediction({ params }: PredictionParams) {
             <p><strong>Area:</strong> {countryInfo.area.toLocaleString()} km²</p>
             <p><strong>Currency:</strong> {Object.keys(countryInfo.currencies)[0]}</p>
             <p><strong>Languages:</strong> {Object.values(countryInfo.languages).join(", ")}</p>
+            <h3 className="text-3xl p-20 font-semibold mb-4 text-navy">AI integration coming soon...</h3>
           </div>
         ) : (
           <p>Loading country information...</p>
         )}
-      </div>
-      <div className="fixed top-80 right-28 w-1/3 h-screen p-20">
-        <h3 className="text-3xl font-semibold mb-4 text-navy">AI integration coming soon...</h3>
       </div>
     </div>
   );
